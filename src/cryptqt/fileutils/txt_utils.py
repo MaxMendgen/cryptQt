@@ -1,17 +1,21 @@
 def makefile(text: str, filename: str) -> None:
     """
-    test_function does blah blah blah.
+    makefile takes a string and turns it into a utf-8 file
 
-    :param p1: describe about parameter p1
-    :param p2: describe about parameter p2
+    :param text: string to be turned into a file
+    :param filename: name of the file to be written to
     :return: None, output is written to a file
     """   
     with open(filename, "w", encoding="utf-8") as f:
         f.write(text)
 
-
-# turn txt into string 
 def fileToString(filename: str) -> str:
+    """
+    fileToString takes a utf-8 file and turns it into a str
+
+    :param filename: name of the file to be read
+    :return: str of the read content
+    """ 
     with open(filename, "r", encoding="utf8") as f:
         content = f.read()
         return content
