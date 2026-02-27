@@ -58,7 +58,7 @@ def kasiski_test(ciphertext, min_len=3, max_len=5) -> dict:
     ciphertext = ''.join(filter(str.isalpha, ciphertext.upper()))
     repeats = {}
 
-    #find repeated substrings
+    # find repeated substrings
     for size in range(min_len, max_len + 1):
         for i in range(len(ciphertext) - size):
             sub = ciphertext[i:i + size]
@@ -66,14 +66,14 @@ def kasiski_test(ciphertext, min_len=3, max_len=5) -> dict:
                 repeats[sub] = []
             repeats[sub].append(i)
 
-    #get distances between repeated occurrences
+    # get distances between repeated occurrences
     distances = []
     for positions in repeats.values():
         if len(positions) > 1:
             for i in range(len(positions) - 1):
                 distances.append(positions[i + 1] - positions[i])
 
-    #compute GCDs of distances
+    # compute GCDs of distances
     gcds = {}
     for i in range(len(distances)):
         for j in range(i + 1, len(distances)):
@@ -86,5 +86,7 @@ def kasiski_test(ciphertext, min_len=3, max_len=5) -> dict:
 
     return dict(sorted(gcds.items(), key=lambda x: -x[1]))
 
-def kasiski_key(test_result:dict) -> str:
+def kasiski_key(test_result: dict) -> str:
+    if not test_result:
+        return "No key length found"
     return next(iter(test_result))

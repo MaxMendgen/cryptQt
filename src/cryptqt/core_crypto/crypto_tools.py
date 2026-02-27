@@ -89,9 +89,9 @@ def AES_encrypt(key: str, plaintext: str) -> str:
         r=8,
         p=1,
     )
-    key = kdf.derive(key.encode())
+    derived_key = kdf.derive(key.encode())
 
-    aesgcm = AESGCM(key)
+    aesgcm = AESGCM(derived_key)
     ciphertext = aesgcm.encrypt(nonce, plaintext.encode(), None)
 
     payload = b"\x01" + salt + nonce + ciphertext
@@ -112,9 +112,9 @@ def AES_decrypt(key: str, token: str) -> str:
         r=8,
         p=1,
     )
-    key = kdf.derive(key.encode())
+    derived_key = kdf.derive(key.encode())
 
-    aesgcm = AESGCM(key)
+    aesgcm = AESGCM(derived_key)
     plaintext = aesgcm.decrypt(nonce, ciphertext, None)
 
     return plaintext.decode()
@@ -124,7 +124,7 @@ import base64
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import hashes, serialization
 
-def generate_rsa_keys(passphrase: str = None):
+def generate_rsa_keys(passphrase: str | None = None):
     """
     Generates a new 2048-bit RSA key pair.
     Optionally encrypts the private key with a passphrase.
@@ -156,7 +156,7 @@ def generate_rsa_keys(passphrase: str = None):
     print("Keys saved to private_key.pem and public_key.pem")
     return private_key, public_key
 
-def load_private_key(path: str, passphrase: str = None):
+def load_private_key(path: str, passphrase: str | None = None):
     with open(path, "rb") as f:
         pem_data = f.read()
     private_key = serialization.load_pem_private_key(
