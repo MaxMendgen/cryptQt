@@ -3,10 +3,12 @@ from .raw_utils import (
 )
 
 from .txt_utils import (
-    makefile,
+    makeFile,
     txtToString,
+    normalize_string,
+    solidify_string
 )
 
 __all__ = [
-    "txtToString", "file_to_string", "makefile",
+    "txtToString", "file_to_string", "makeFile", "normalize_string", "solidify_string"
 ]

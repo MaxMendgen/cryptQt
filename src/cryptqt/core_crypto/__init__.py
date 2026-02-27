@@ -4,10 +4,10 @@ from .analysis_tools import (
     kasiski_test,
     kasiski_key,
 )
-""" 
+
 from .attack_tools import (
-    brute_force_ceasar,
-) """
+    ceasar_brute_force,
+)
 
 from .crypto_tools import (
     ceasar_encrypt,
@@ -17,8 +17,8 @@ from .crypto_tools import (
     otp,
     rsa_decrypt,
     rsa_encrypt,
-    AES_decrypt,
-    AES_encrypt,
+    aes_decrypt,
+    aes_encrypt,
     generate_rsa_keys,
     load_private_key,
     load_public_key,
@@ -27,5 +27,6 @@ from .crypto_tools import (
 __all__ = [
     "ceasar_analysis", "vigenere_square", "kasiski_test", "kasiski_key", "ceasar_encrypt",
     "ceasar_decrypt", "vigenere_decrypt", "vigenere_encrypt", "otp", "rsa_decrypt", "rsa_encrypt", 
-    "AES_decrypt", "AES_encrypt", "generate_rsa_keys", "load_private_key", "load_public_key",
+    "aes_decrypt", "aes_encrypt", "generate_rsa_keys", "load_private_key", "load_public_key",
+    "ceasar_brute_force",
 ]

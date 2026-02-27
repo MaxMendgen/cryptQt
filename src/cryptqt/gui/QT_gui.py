@@ -24,14 +24,18 @@ class CryptoGUI(QWidget):
         self.ensure_dirs()
 
         # ===== LEFT BUTTONS =====
+
         self.encrypt_btn = QPushButton("Encrypt")
         self.decrypt_btn = QPushButton("Decrypt")
         self.open_btn = QPushButton("Open File")
-        self.generate_keys_btn = QPushButton("Generate RSA Keys")
         self.save_output_btn = QPushButton("Save Output as File")
+        self.generate_keys_btn = QPushButton("Generate RSA Keys")
+        self.normalize_text_btn = QPushButton("Lossy Normalize Text")
+        self.solidify_text_btn = QPushButton("Solidify Text")
         self.clear_fields_btn = QPushButton("Clear Fields")
 
         self.caesar_analysis_btn = QPushButton("Caesar Analysis")
+        self.caesar_brute_force_btn = QPushButton("Caesar Brute Force")
         self.vigenere_analysis_btn = QPushButton("Vigenere Analysis (Kasiski)")
         self.vigenere_square_btn = QPushButton("Vigenere Square")
 
@@ -39,11 +43,14 @@ class CryptoGUI(QWidget):
         left_layout.addWidget(self.encrypt_btn)
         left_layout.addWidget(self.decrypt_btn)
         left_layout.addWidget(self.open_btn)
-        left_layout.addWidget(self.generate_keys_btn)
         left_layout.addWidget(self.save_output_btn)
+        left_layout.addWidget(self.generate_keys_btn)
+        left_layout.addWidget(self.normalize_text_btn)
+        left_layout.addWidget(self.solidify_text_btn)
         left_layout.addWidget(self.clear_fields_btn)
         left_layout.addSpacing(20)
         left_layout.addWidget(self.caesar_analysis_btn)
+        left_layout.addWidget(self.caesar_brute_force_btn)
         left_layout.addWidget(self.vigenere_analysis_btn)
         left_layout.addWidget(self.vigenere_square_btn)
         left_layout.addStretch()
@@ -97,7 +104,11 @@ class CryptoGUI(QWidget):
         self.generate_keys_btn.clicked.connect(self.generate_rsa_keys)
         self.save_output_btn.clicked.connect(self.save_output_as_file)
         self.clear_fields_btn.clicked.connect(self.clear_fields)
+        self.normalize_text_btn.clicked.connect(self.normalize_text)
+        self.solidify_text_btn.clicked.connect(self.solidify_text)
+
         self.caesar_analysis_btn.clicked.connect(self.run_caesar_analysis)
+        self.caesar_brute_force_btn.clicked.connect(self.run_caesar_brute_force)
         self.vigenere_analysis_btn.clicked.connect(self.run_vigenere_analysis)
         self.vigenere_square_btn.clicked.connect(self.run_vigenere_square)
 
@@ -148,7 +159,7 @@ class CryptoGUI(QWidget):
             return
 
         try:
-            makefile(content, path)
+            makeFile(content, path)
             QMessageBox.information(self, "Saved", f"Output saved to:\n{path}")
         except Exception as e:
             self.error(f"{type(e).__name__}: {e}")
@@ -172,13 +183,13 @@ class CryptoGUI(QWidget):
 
         try:
             if algo == self.algo_caeser:
-                result = ceasar_encrypt(text, int(key))
+                result = ceasar_encrypt(text, key)
             elif algo == self.algo_vigenere:
                 result = vigenere_encrypt(text, key)
             elif algo == self.algo_otp:
                 result = otp(text, key)
             elif algo == self.algo_aes:
-                result = AES_encrypt(key, text)
+                result = aes_encrypt(key, text)
             elif algo == self.algo_rsa:
                 key_path = "files/keys"
                 if not os.path.exists(f"{key_path}/public_key.pem"):
@@ -208,13 +219,13 @@ class CryptoGUI(QWidget):
 
         try:
             if algo == self.algo_caeser:
-                result = ceasar_decrypt(text, int(key))
+                result = ceasar_decrypt(text, key)
             elif algo == self.algo_vigenere:
                 result = vigenere_decrypt(text, key)
             elif algo == self.algo_otp:
                 result = otp(text, key)
             elif algo == self.algo_aes:
-                result = AES_decrypt(key, text)
+                result = aes_decrypt(key, text)
             elif algo == self.algo_rsa:
                 priv = load_private_key("files/keys/private_key.pem", key or None)
                 result = rsa_decrypt(priv, text)
@@ -244,6 +255,15 @@ class CryptoGUI(QWidget):
         except Exception as e:
             self.error(f"{type(e).__name__}: {e}")
 
+    def run_caesar_brute_force(self):
+        try:
+            text = self.input_text.toPlainText()
+            results = ceasar_brute_force(text)
+            output = "\n\n".join([f"Key {key}:\n{dec}" for key, dec in results.items()])
+            self.output_text.setPlainText(output)
+        except Exception as e:
+            self.error(f"{type(e).__name__}: {e}")
+
     def run_vigenere_analysis(self):
         try:
             text = self.input_text.toPlainText()
@@ -259,12 +279,24 @@ class CryptoGUI(QWidget):
         square = vigenere_square()
         self.output_text.setPlainText(square)
 
-    # ================= OTHER =================
+    # ================= TEXT HANDLING =================
+
+    def normalize_text(self):
+        text = self.input_text.toPlainText()
+        normalized = normalize_string(text)
+        self.input_text.setPlainText(normalized)
+
+    def solidify_text(self):
+        text = self.input_text.toPlainText()
+        solidified = solidify_string(text)
+        self.input_text.setPlainText(solidified)
 
     def clear_fields(self):
-        self.input_text.clear()
-        self.key_input.clear()
-        self.output_text.clear()
+        reply = QMessageBox.question(self, "Clear Fields", "Are you sure you want to clear all fields?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if reply == QMessageBox.StandardButton.Yes:
+            self.input_text.clear()
+            self.key_input.clear()
+            self.output_text.clear()
 
 # ================= RUN =================
 
