@@ -1,5 +1,5 @@
 # CryptQT 
-## a simple QT tool to encrypt and decrypt files
+## a simple QT tool to encrypt and decrypt text
 
 CryptQT is a simple graphical tool built with Qt for encrypting and decrypting files. It supports:
 
